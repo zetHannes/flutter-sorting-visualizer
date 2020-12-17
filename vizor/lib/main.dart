@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:vizor/dataWidget.dart';
 void main() {
   runApp(VizorApp());
 }
@@ -31,9 +31,16 @@ class _SortingPageState extends State<SortingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        backgroundColor: Color.fromARGB(255,4,30,75),
+        title: Text(widget.title, style: TextStyle(fontFamily: "Segoe UI", fontWeight: FontWeight.bold, fontSize:40)),
+        centerTitle: true,
       ),
-      body: Column(children: [],)
+        body: Container(
+          color:Color.fromARGB(255,7,47,92),
+          child:Column(children: [
+          DataWidget()
+        ],)
+      )
     );
   }
 }
