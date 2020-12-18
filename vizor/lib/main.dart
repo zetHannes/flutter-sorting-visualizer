@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vizor/dataWidget.dart';
+import 'package:vizor/optionsWidget.dart';
 void main() {
   runApp(VizorApp());
 }
@@ -32,13 +33,14 @@ class _SortingPageState extends State<SortingPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255,4,30,75),
-        title: Text(widget.title, style: TextStyle(fontFamily: "Segoe UI", fontWeight: FontWeight.bold, fontSize:40)),
+        title: Text(widget.title, style: TextStyle(fontFamily: "Segoe UI", fontWeight: FontWeight.bold, fontSize:45)),
         centerTitle: true,
       ),
         body: Container(
           color:Color.fromARGB(255,7,47,92),
           child:Column(children: [
-          DataWidget()
+          DataWidget(),
+          OptionsWidget(),
         ],)
       )
     );
