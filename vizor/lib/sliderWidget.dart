@@ -63,6 +63,18 @@ class VizorSliderState extends State<VizorSlider> with TickerProviderStateMixin 
         AnimatedPositioned(
           duration: Duration(milliseconds: 1),
           curve: Curves.linear,
+          width:_offset+50,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255,0,167,40),
+              borderRadius: BorderRadius.all(Radius.circular(50))
+            ),
+            height: 50
+          )
+        ),
+        AnimatedPositioned(
+          duration: Duration(milliseconds: 1),
+          curve: Curves.linear,
           left: _offset,
           width: 50,
           height:50,
@@ -71,7 +83,22 @@ class VizorSliderState extends State<VizorSlider> with TickerProviderStateMixin 
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.circular(50)),
             ),
-            width:50,height:50
+            width:50,height:50,
+          )
+        ),
+        AnimatedPositioned(
+          duration: Duration(milliseconds: 1),
+          curve: Curves.linear,
+          left: _offset + 15,
+          width: 20,
+          height:20,
+          top:15,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255,0,167,40),
+              borderRadius: BorderRadius.all(Radius.circular(25)),
+            ),
+            width:20,height:20,
           )
         )
       ])
