@@ -14,8 +14,8 @@ class VizorSliderState extends State<VizorSlider> with TickerProviderStateMixin 
   double _min = 0,
       _max = 100,
       _currentValue = 0,
-      _offset = 0;  // left side of the slider circle
-
+      _offset = 0,  // left side of the slider circle
+      padding = 30;
   Color _green = Color.fromARGB(255,0,167,40);
 
   VizorSliderState() {
@@ -34,16 +34,16 @@ class VizorSliderState extends State<VizorSlider> with TickerProviderStateMixin 
     return Listener(
       onPointerDown: (PointerDownEvent event) {  
         setState(() {
-          if ( event.position.dx > 50 && event.position.dx < MediaQuery.of(context).size.width-50 ) {
-            double dx = event.position.dx - 50 - _offset;
+          if ( event.position.dx > padding && event.position.dx < MediaQuery.of(context).size.width-50 ) {
+            double dx = event.position.dx - padding - _offset;
             _offset += dx;
           }
         });      
       },
       onPointerMove: (PointerMoveEvent event) {
           setState(() {
-            if ( event.position.dx > 50 && event.position.dx < MediaQuery.of(context).size.width-50 ) {
-              double dx = event.position.dx - 50 - _offset;
+            if ( event.position.dx > padding && event.position.dx < MediaQuery.of(context).size.width-50 ) {
+              double dx = event.position.dx - padding - _offset;
               _offset += dx;
             }
         });   
@@ -57,7 +57,7 @@ class VizorSliderState extends State<VizorSlider> with TickerProviderStateMixin 
             color: Color.fromARGB(255,150,150,150),
             borderRadius: BorderRadius.all(Radius.circular(50))
           ),
-          width:MediaQuery.of(context).size.width-50,
+          width:MediaQuery.of(context).size.width-padding,
           height: 50
         ),
         AnimatedPositioned(
