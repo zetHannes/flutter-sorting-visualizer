@@ -22,7 +22,7 @@ class ArraySizeWidgetState extends State<ArraySizeWidget> with TickerProviderSta
   }
 
   int getSelection() {
-    return _selectedIndex;
+    return values[_selectedIndex];
   }
   
  @override
