@@ -4,21 +4,24 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 class DataWidget extends StatefulWidget {
-  DataWidget({Key key}) : super(key: key);
+  final VoidCallback onFinish;
+  DataWidget({Key key, @required this.onFinish}) : super(key: key);
 
   @override
-  _DataWidgetState createState() => _DataWidgetState();
+  DataWidgetState createState() => DataWidgetState(onFinish: this.onFinish);
 }
 
-class _DataWidgetState extends State<DataWidget> {
+class DataWidgetState extends State<DataWidget> {
   int _itemCount = 10;
   double _sleepTime = 0.05;
   List<double> values;
+  bool stopped = false;
+  final VoidCallback onFinish;
   final int modeBubbleSort = 0,
             modeQuickSort = 1,
             modeHeapSort = 2;
 
-  _DataWidgetState() {
+  DataWidgetState({Key key, @required this.onFinish}) {
     generateNewData(_itemCount);
   }
 
@@ -47,12 +50,17 @@ class _DataWidgetState extends State<DataWidget> {
   void bubbleSort() async {
     for(int i = 0; i < values.length-1; i++) {
       for( int j = 0; j < values.length-i-1; j++) {
+        if ( stopped ) {
+          stopped = false;
+          return;
+        }
         if ( values.elementAt(j) > values.elementAt(j+1) ) {
           swapValues(j, j+1);
         }
         await Future.delayed(Duration(milliseconds: (_sleepTime*1000).round()));
       }
     }
+    onFinish();
   }
 
 
@@ -68,6 +76,11 @@ class _DataWidgetState extends State<DataWidget> {
     }
   }
 
+  void stop() {
+    setState(() {
+      stopped = true;      
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

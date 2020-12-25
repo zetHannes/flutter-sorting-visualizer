@@ -32,12 +32,14 @@ class _SortingPageState extends State<SortingPage> {
     setState(() {
       buttonText = "Reset Data";
       started = false;
+      finished = true;
     });
   }
 
   GlobalKey<OptionsWidgetState> _optionsWidgetKey = GlobalKey();
   GlobalKey<DataWidgetState> _dataWidgetKey = GlobalKey();
   bool started = false;
+  bool finished = false;
   String buttonText = "Start";
   @override
   Widget build(BuildContext context) {
@@ -52,25 +54,34 @@ class _SortingPageState extends State<SortingPage> {
           child:Column(children: [
           DataWidget(key: _dataWidgetKey, onFinish: finish,),
           OptionsWidget(key: _optionsWidgetKey),
-          Padding(
-            padding: EdgeInsets.all(10.0),
-            child: RaisedButton(
-              onPressed: () {
-                setState(() {
-                  if ( buttonText == "Stop" ) {
-                      _dataWidgetKey.currentState.stop();     
-                      buttonText = "Resume"; 
-                  }
-                  else {
-                    _dataWidgetKey.currentState.sort(_dataWidgetKey.currentState.modeBubbleSort);   
-                    buttonText = "Stop";
-                  }
-                });
-              },
-              textColor: Colors.white,
-              color: 
-                ( buttonText == "Start" || buttonText == "Resume" ) ? Color.fromARGB(255,0,167,40) : Color.fromARGB(255,255,0,0),            
-              child: Container(
+          ( !finished ) ? 
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: RaisedButton(
+                onPressed: () {
+                  setState(() {
+                    // user clicks on "Stop"
+                    if ( buttonText == "Stop" ) {
+                        _dataWidgetKey.currentState.stop();     
+                        buttonText = "Resume"; 
+                    }
+                    // user clicks on "Start"
+                    else if ( buttonText == "Start" ) {
+                      finished = false;
+                      _dataWidgetKey.currentState.sort(_dataWidgetKey.currentState.modeBubbleSort);   
+                      buttonText = "Stop";
+                    }
+                    // user clicks on "Resume"
+                    else {
+                      _dataWidgetKey.currentState.sort(_dataWidgetKey.currentState.modeBubbleSort);
+                      buttonText = "Stop";
+                    }
+                  });
+                },
+                textColor: Colors.white,
+                color: 
+                  ( buttonText == "Start" || buttonText == "Resume" ) ? Color.fromARGB(255,0,167,40) : Color.fromARGB(255,255,0,0),            
+                child: Container(
                   height: 50,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8.0)
@@ -83,16 +94,20 @@ class _SortingPageState extends State<SortingPage> {
                   ),
                 )
               )
-            ),
+            )
+          : 
+            Container(),
 
-          ( buttonText == "Resume" ) ? 
+          ( buttonText == "Resume" || finished ) ? 
             Padding(
               padding: EdgeInsets.all(10.0),
               child: RaisedButton(
                 onPressed: () {
+                  // resets the data and the state goes back to startup(user can start the visualization).
                   setState(() {
                       _dataWidgetKey.currentState.generateNewData(_optionsWidgetKey.currentState.getArraySize());      
-                      buttonText = "Start";    
+                      buttonText = "Start";   // top button shall become the "Start" button again
+                      finished = false;   // button shall disappear after click
                   });
                 },
                 textColor: Colors.white,
