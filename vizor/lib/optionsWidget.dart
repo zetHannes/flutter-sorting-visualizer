@@ -24,7 +24,7 @@ class OptionsWidget extends StatefulWidget {
 class OptionsWidgetState extends State<OptionsWidget> {
 
   double getSliderValue() {
-    return Keys.sliderKey.currentState.getOffset();
+    return Keys.sliderKey.currentState.getValue();
   }
 
   int getArraySize() {
