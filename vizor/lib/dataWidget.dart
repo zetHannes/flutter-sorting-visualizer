@@ -25,7 +25,6 @@ class DataWidgetState extends State<DataWidget> {
   DataWidgetState({Key key, @required this.onFinish}) {
     generateNewData(_itemCount);
     startupMode = false;
-    print("startup over");
   }
 
   void generateNewData(int itemCount) {
@@ -35,7 +34,6 @@ class DataWidgetState extends State<DataWidget> {
       Random rand = new Random();
       for(int i = 0; i < _itemCount; i++ ) {
         values.add(rand.nextDouble()*200);
-        print("adding");
       }
     }
     else {
@@ -45,7 +43,6 @@ class DataWidgetState extends State<DataWidget> {
         Random rand = new Random();
         for(int i = 0; i < _itemCount; i++ ) {
           values.add(rand.nextDouble()*200);
-          print("adding");
         }
       });
     }
@@ -56,9 +53,7 @@ class DataWidgetState extends State<DataWidget> {
     double val2 = values.elementAt(idx2);
     setState(() { 
       values.replaceRange(idx1,idx1+1, [val2]);
-      values.replaceRange(idx2,idx2+1, [val1]);
-      print("set state");
-      
+      values.replaceRange(idx2,idx2+1, [val1]);      
     });
   }
 
@@ -115,7 +110,6 @@ class DataWidgetState extends State<DataWidget> {
               itemBuilder: (BuildContext ctxt, int index) {
                 double fullSize = (MediaQuery.of(context).size.width-10)/_itemCount;
                 double contHeight = values.elementAt(index);
-                print("re-render");
                 return Container(
                   width:fullSize,
                   child: Padding(
