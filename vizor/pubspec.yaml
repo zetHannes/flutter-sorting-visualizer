@@ -43,7 +43,7 @@ flutter:
       - family: SegoeUI
         fonts:
           - asset: fonts/segoeUIbold.ttf
-          - asset: segoeUIboldItalic.ttf 
+          - asset: fonts/segoeUIboldItalic.ttf 
             style: italic
 
   # The following line ensures that the Material Icons font is
