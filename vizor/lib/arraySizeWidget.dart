@@ -16,7 +16,7 @@ class ArraySizeWidgetState extends State<ArraySizeWidget> with TickerProviderSta
   final Color _colorGreen = Color.fromARGB(255,0,167,40);
   final Color _colorGray = Color.fromARGB(255, 59, 59, 59);
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   List<int> values = [5,10,50,100,200];
   ArraySizeWidgetState() {
   }
