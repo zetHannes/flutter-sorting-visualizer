@@ -13,19 +13,17 @@ class Keys {
 
 class OptionsWidget extends StatefulWidget {
 
+  final ValueChanged<double> onSliderChanged;
   final ValueChanged<int> onSelectionChanged;
 
-  OptionsWidget({Key key, @required this.onSelectionChanged}) : super(key: key);
+  OptionsWidget({Key key, @required this.onSelectionChanged, @required this.onSliderChanged}) : super(key: key);
 
   @override
   OptionsWidgetState createState() => OptionsWidgetState();
 }
 
 class OptionsWidgetState extends State<OptionsWidget> {
-
-  double getSliderValue() {
-    return Keys.sliderKey.currentState.getValue();
-  }
+  
 
   int getArraySize() {
     return Keys.arraySizeKey.currentState.getSelection();
@@ -51,7 +49,7 @@ class OptionsWidgetState extends State<OptionsWidget> {
         padding: EdgeInsets.only(top:10, bottom:5),
         child: Text("Speed", style: TextStyle(color: Colors.white, fontFamily: "Segoe UI", fontWeight: FontWeight.bold, fontSize:30)),
       ),
-      VizorSlider(key: Keys.sliderKey),
+      VizorSlider(key: Keys.sliderKey, onValueChanged: widget.onSliderChanged,),
       Padding(
         padding: EdgeInsets.only(top:10,bottom:5),
         child:

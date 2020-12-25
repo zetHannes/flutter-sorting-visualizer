@@ -45,6 +45,12 @@ class _SortingPageState extends State<SortingPage> {
       _optionsWidgetKey.currentState.prepareSortingVisualization();
       _dataWidgetKey.currentState.sort(_dataWidgetKey.currentState.modeBubbleSort);
   }
+
+  void changeSpeed(double percentage) {
+    _dataWidgetKey.currentState.changeSpeed(percentage);
+  }
+
+
   GlobalKey<OptionsWidgetState> _optionsWidgetKey = GlobalKey();
   GlobalKey<DataWidgetState> _dataWidgetKey = GlobalKey();
   bool started = false;
@@ -62,7 +68,7 @@ class _SortingPageState extends State<SortingPage> {
           color:Color.fromARGB(255,7,47,92),
           child:Column(children: [
           DataWidget(key: _dataWidgetKey, onFinish: finish,),
-          OptionsWidget(key: _optionsWidgetKey, onSelectionChanged: changeSelection,),
+          OptionsWidget(key: _optionsWidgetKey, onSelectionChanged: changeSelection, onSliderChanged: changeSpeed,),
           ( !finished ) ? 
             Padding(
               padding: EdgeInsets.all(10.0),

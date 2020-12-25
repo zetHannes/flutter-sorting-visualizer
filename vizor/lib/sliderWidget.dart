@@ -4,7 +4,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 class VizorSlider extends StatefulWidget {
-  VizorSlider({Key key}) : super(key: key);
+  final ValueChanged<double> onValueChanged;
+  VizorSlider({Key key, @required this.onValueChanged}) : super(key: key);
 
   @override
   VizorSliderState createState() => VizorSliderState();
@@ -47,6 +48,7 @@ class VizorSliderState extends State<VizorSlider> with TickerProviderStateMixin 
               double dx = event.position.dx - padding - _offset;
               _offset += dx;
             }
+            widget.onValueChanged(getValue());
         });   
       },
       onPointerUp: (PointerUpEvent event) {

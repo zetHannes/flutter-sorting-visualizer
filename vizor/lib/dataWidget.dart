@@ -13,7 +13,8 @@ class DataWidget extends StatefulWidget {
 
 class DataWidgetState extends State<DataWidget> {
   int _itemCount = 10;
-  double _sleepTime = 0.05;
+  double _sleepTime = 2;
+  double _initialSleepTime = 2;
   List<double> values;
   bool stopped = false;
   bool startupMode = true;
@@ -25,6 +26,15 @@ class DataWidgetState extends State<DataWidget> {
   DataWidgetState({Key key, @required this.onFinish}) {
     generateNewData(_itemCount);
     startupMode = false;
+  }
+
+  // changes the sleep timer in order to accelerate/slow down the sorting operations
+  void changeSpeed(double percentage) {
+    double factor = 1 - percentage;
+    setState(() {
+      _sleepTime = _initialSleepTime * factor;
+      print("factor:" + factor.toString() + " , sleeptime:" + _sleepTime.toString());
+    });
   }
 
   void generateNewData(int itemCount) {
