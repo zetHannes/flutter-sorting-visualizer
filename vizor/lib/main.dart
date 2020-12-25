@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vizor/arraySizeWidget.dart';
 import 'package:vizor/dataWidget.dart';
 import 'package:vizor/optionsWidget.dart';
 void main() {
@@ -27,22 +28,96 @@ class SortingPage extends StatefulWidget {
 
 class _SortingPageState extends State<SortingPage> {
 
+  void finish() {
+    setState(() {
+      buttonText = "Reset Data";
+      started = false;
+    });
+  }
 
+  GlobalKey<OptionsWidgetState> _optionsWidgetKey = GlobalKey();
+  GlobalKey<DataWidgetState> _dataWidgetKey = GlobalKey();
+  bool started = false;
+  String buttonText = "Start";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255,4,30,75),
-        title: Text(widget.title, style: TextStyle(fontFamily: "Segoe UI", fontWeight: FontWeight.bold, fontSize:45)),
+        title: Text(widget.title, style: TextStyle(fontFamily: "SegoeUI", fontStyle: FontStyle.italic, fontSize:45)),
         centerTitle: true,
       ),
         body: Container(
           color:Color.fromARGB(255,7,47,92),
           child:Column(children: [
-          DataWidget(),
-          OptionsWidget(),
-        ],)
+          DataWidget(key: _dataWidgetKey, onFinish: finish,),
+          OptionsWidget(key: _optionsWidgetKey),
+          Padding(
+            padding: EdgeInsets.all(10.0),
+            child: RaisedButton(
+              onPressed: () {
+                setState(() {
+                  if ( buttonText == "Stop" ) {
+                      _dataWidgetKey.currentState.stop();     
+                      buttonText = "Resume"; 
+                  }
+                  else {
+                    _dataWidgetKey.currentState.sort(_dataWidgetKey.currentState.modeBubbleSort);   
+                    buttonText = "Stop";
+                  }
+                });
+              },
+              textColor: Colors.white,
+              color: 
+                ( buttonText == "Start" || buttonText == "Resume" ) ? Color.fromARGB(255,0,167,40) : Color.fromARGB(255,255,0,0),            
+              child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0)
+                  ),
+                  width: MediaQuery.of(context).size.width-20,
+                  child: Center(
+                    child: Text(
+                      buttonText, style: TextStyle(fontFamily: "SegoeUI", fontSize:30)
+                    )
+                  ),
+                )
+              )
+            ),
+
+          ( buttonText == "Resume" ) ? 
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child: RaisedButton(
+                onPressed: () {
+                  setState(() {
+                      _dataWidgetKey.currentState.generateNewData(_optionsWidgetKey.currentState.getArraySize());      
+                      buttonText = "Start";    
+                  });
+                },
+                textColor: Colors.white,
+                color: Color.fromARGB(255,0,104,124),            
+                child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0)
+                    ),
+                    width: MediaQuery.of(context).size.width-20,
+                    child: Center(
+                      child: Text(
+                        "Reset Data", style: TextStyle(fontFamily: "SegoeUI", fontSize:30)
+                      )
+                    ),
+                  )
+                )
+              ) 
+            : 
+              Container(),
+
+          ],
+        )
       )
     );
   }
+
 }
