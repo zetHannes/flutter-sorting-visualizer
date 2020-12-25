@@ -33,9 +33,18 @@ class _SortingPageState extends State<SortingPage> {
       buttonText = "Reset Data";
       started = false;
       finished = true;
+      _optionsWidgetKey.currentState.finish();
     });
   }
 
+  void changeSelection(int value) {
+    _dataWidgetKey.currentState.generateNewData(value);    
+  }
+
+  void sort() {
+      _optionsWidgetKey.currentState.prepareSortingVisualization();
+      _dataWidgetKey.currentState.sort(_dataWidgetKey.currentState.modeBubbleSort);
+  }
   GlobalKey<OptionsWidgetState> _optionsWidgetKey = GlobalKey();
   GlobalKey<DataWidgetState> _dataWidgetKey = GlobalKey();
   bool started = false;
@@ -53,7 +62,7 @@ class _SortingPageState extends State<SortingPage> {
           color:Color.fromARGB(255,7,47,92),
           child:Column(children: [
           DataWidget(key: _dataWidgetKey, onFinish: finish,),
-          OptionsWidget(key: _optionsWidgetKey),
+          OptionsWidget(key: _optionsWidgetKey, onSelectionChanged: changeSelection,),
           ( !finished ) ? 
             Padding(
               padding: EdgeInsets.all(10.0),
@@ -68,12 +77,12 @@ class _SortingPageState extends State<SortingPage> {
                     // user clicks on "Start"
                     else if ( buttonText == "Start" ) {
                       finished = false;
-                      _dataWidgetKey.currentState.sort(_dataWidgetKey.currentState.modeBubbleSort);   
+                      sort();
                       buttonText = "Stop";
                     }
                     // user clicks on "Resume"
                     else {
-                      _dataWidgetKey.currentState.sort(_dataWidgetKey.currentState.modeBubbleSort);
+                      sort();
                       buttonText = "Stop";
                     }
                   });
@@ -99,6 +108,7 @@ class _SortingPageState extends State<SortingPage> {
             Container(),
 
           ( buttonText == "Resume" || finished ) ? 
+            // Reset Data Button
             Padding(
               padding: EdgeInsets.all(10.0),
               child: RaisedButton(
@@ -108,6 +118,7 @@ class _SortingPageState extends State<SortingPage> {
                       _dataWidgetKey.currentState.generateNewData(_optionsWidgetKey.currentState.getArraySize());      
                       buttonText = "Start";   // top button shall become the "Start" button again
                       finished = false;   // button shall disappear after click
+                      _optionsWidgetKey.currentState.finish();
                   });
                 },
                 textColor: Colors.white,

@@ -16,6 +16,7 @@ class DataWidgetState extends State<DataWidget> {
   double _sleepTime = 0.05;
   List<double> values;
   bool stopped = false;
+  bool startupMode = true;
   final VoidCallback onFinish;
   final int modeBubbleSort = 0,
             modeQuickSort = 1,
@@ -23,15 +24,30 @@ class DataWidgetState extends State<DataWidget> {
 
   DataWidgetState({Key key, @required this.onFinish}) {
     generateNewData(_itemCount);
+    startupMode = false;
+    print("startup over");
   }
 
   void generateNewData(int itemCount) {
-    _itemCount = itemCount;
-    values = new List<double>();
-    Random rand = new Random();
-    for(int i = 0; i < _itemCount; i++ ) {
-      values.add(rand.nextDouble()*200);
-      print("adding");
+    if ( startupMode ) {
+      _itemCount = itemCount;
+      values = new List<double>();
+      Random rand = new Random();
+      for(int i = 0; i < _itemCount; i++ ) {
+        values.add(rand.nextDouble()*200);
+        print("adding");
+      }
+    }
+    else {
+      setState(() {
+        _itemCount = itemCount;
+        values = new List<double>();
+        Random rand = new Random();
+        for(int i = 0; i < _itemCount; i++ ) {
+          values.add(rand.nextDouble()*200);
+          print("adding");
+        }
+      });
     }
   }
 
