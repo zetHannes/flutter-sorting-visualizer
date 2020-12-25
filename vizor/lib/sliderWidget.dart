@@ -21,8 +21,9 @@ class VizorSliderState extends State<VizorSlider> with TickerProviderStateMixin 
   VizorSliderState() {
   }
 
+  // returns the value of the slider as a value between 0 and 1
   double getOffset() {
-    return _offset;
+    return _offset/(MediaQuery.of(context).size.width-padding-50);
   }
   
  @override
