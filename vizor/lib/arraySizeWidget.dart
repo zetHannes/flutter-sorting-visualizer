@@ -21,7 +21,6 @@ class ArraySizeWidgetState extends State<ArraySizeWidget> with TickerProviderSta
   
   int _selectedIndex = 1;
   bool startupMode = true;
-  bool disabled = false;
   List<int> values = [5,10,50,100,200];
   ArraySizeWidgetState() {
   }
@@ -30,19 +29,6 @@ class ArraySizeWidgetState extends State<ArraySizeWidget> with TickerProviderSta
     return values[_selectedIndex];
   }
 
-  // Disable the widget: IgnorePointer ignoring attribute is true
-  bool disable() {
-    setState(() {
-      disabled = true;      
-    });
-  }
-
-  // Enable the widget: IgnorePointer ignoring attribute is false
-  bool enable() {
-    setState(() {
-      disabled = false;
-    });
-  }
 
  @override
  initState() {
@@ -59,140 +45,137 @@ class ArraySizeWidgetState extends State<ArraySizeWidget> with TickerProviderSta
    build(BuildContext context) {
     double wdt = 62;   // the width of each element
     double margin = 7; // the margin of each element
-    return IgnorePointer(
-      ignoring: disabled,
-      child:Padding(
-        padding: EdgeInsets.all(5), 
-        child:Center(
-          child:Row(
-            children: [ 
-              GestureDetector(
-                onTap: () {
-                  changeIndex(0);
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(left:margin, right: margin),
-                  child: DottedBorder(
-                    color: Colors.white,
-                    dashPattern: [10,4],
-                    borderType: BorderType.RRect,
-                      radius: Radius.circular(8),
+    return Padding(
+      padding: EdgeInsets.all(5), 
+      child:Center(
+        child:Row(
+          children: [ 
+            GestureDetector(
+              onTap: () {
+                changeIndex(0);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(left:margin, right: margin),
+                child: DottedBorder(
+                  color: Colors.white,
+                  dashPattern: [10,4],
+                  borderType: BorderType.RRect,
+                    radius: Radius.circular(8),
 
-                    strokeWidth: 3,
-                    child: Container(
-                      width: wdt,
-                      height:35,
-                      decoration: BoxDecoration(
-                        color: ( _selectedIndex == 0 ) ? _colorGreen : _colorGray,
-                        borderRadius: BorderRadius.circular(8)
-                      ),
-                      child: Center(child:Text(values[0].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  strokeWidth: 3,
+                  child: Container(
+                    width: wdt,
+                    height:35,
+                    decoration: BoxDecoration(
+                      color: ( _selectedIndex == 0 ) ? _colorGreen : _colorGray,
+                      borderRadius: BorderRadius.circular(8)
                     ),
-                  )
-                  )
-              ),
-              GestureDetector(
-                onTap: () {
-                  changeIndex(1);
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(left:margin, right: margin),
-                  child: DottedBorder(
-                    color: Colors.white,
-                    dashPattern: [10,4],
-                    borderType: BorderType.RRect,
-                      radius: Radius.circular(8),
+                    child: Center(child:Text(values[0].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  ),
+                )
+                )
+            ),
+            GestureDetector(
+              onTap: () {
+                changeIndex(1);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(left:margin, right: margin),
+                child: DottedBorder(
+                  color: Colors.white,
+                  dashPattern: [10,4],
+                  borderType: BorderType.RRect,
+                    radius: Radius.circular(8),
 
-                    strokeWidth: 3,
-                    child: Container(
-                      width: wdt,
-                      height:35,
-                      decoration: BoxDecoration(
-                        color: ( _selectedIndex == 1 ) ? _colorGreen : _colorGray,
-                        borderRadius: BorderRadius.circular(8)
-                      ),
-                      child: Center(child:Text(values[1].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  strokeWidth: 3,
+                  child: Container(
+                    width: wdt,
+                    height:35,
+                    decoration: BoxDecoration(
+                      color: ( _selectedIndex == 1 ) ? _colorGreen : _colorGray,
+                      borderRadius: BorderRadius.circular(8)
                     ),
-                  )
-                  )
-              ),
-              GestureDetector(
-                onTap: () {
-                  changeIndex(2);
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(left:margin, right: margin),
-                  child: DottedBorder(
-                    color: Colors.white,
-                    dashPattern: [10,4],
-                    borderType: BorderType.RRect,
-                      radius: Radius.circular(8),
+                    child: Center(child:Text(values[1].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  ),
+                )
+                )
+            ),
+            GestureDetector(
+              onTap: () {
+                changeIndex(2);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(left:margin, right: margin),
+                child: DottedBorder(
+                  color: Colors.white,
+                  dashPattern: [10,4],
+                  borderType: BorderType.RRect,
+                    radius: Radius.circular(8),
 
-                    strokeWidth: 3,
-                    child: Container(
-                      width: wdt,
-                      height:35,
-                      decoration: BoxDecoration(
-                        color: ( _selectedIndex == 2 ) ? _colorGreen : _colorGray,
-                        borderRadius: BorderRadius.circular(8)
-                      ),
-                      child: Center(child:Text(values[2].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  strokeWidth: 3,
+                  child: Container(
+                    width: wdt,
+                    height:35,
+                    decoration: BoxDecoration(
+                      color: ( _selectedIndex == 2 ) ? _colorGreen : _colorGray,
+                      borderRadius: BorderRadius.circular(8)
                     ),
-                  )
-                  )
-              ),
-              GestureDetector(
-                onTap: () {
-                  changeIndex(3);
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(left:margin, right: margin),
-                  child: DottedBorder(
-                    color: Colors.white,
-                    dashPattern: [10,4],
-                    borderType: BorderType.RRect,
-                      radius: Radius.circular(8),
+                    child: Center(child:Text(values[2].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  ),
+                )
+                )
+            ),
+            GestureDetector(
+              onTap: () {
+                changeIndex(3);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(left:margin, right: margin),
+                child: DottedBorder(
+                  color: Colors.white,
+                  dashPattern: [10,4],
+                  borderType: BorderType.RRect,
+                    radius: Radius.circular(8),
 
-                    strokeWidth: 3,
-                    child: Container(
-                      width: wdt,
-                      height:35,
-                      decoration: BoxDecoration(
-                        color: ( _selectedIndex == 3 ) ? _colorGreen : _colorGray,
-                        borderRadius: BorderRadius.circular(8)
-                      ),
-                      child: Center(child:Text(values[3].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  strokeWidth: 3,
+                  child: Container(
+                    width: wdt,
+                    height:35,
+                    decoration: BoxDecoration(
+                      color: ( _selectedIndex == 3 ) ? _colorGreen : _colorGray,
+                      borderRadius: BorderRadius.circular(8)
                     ),
-                  )
-                  )
-              ),
-              GestureDetector(
-                onTap: () {
-                  changeIndex(4);
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(left:margin, right: margin),
-                  child: DottedBorder(
-                    color: Colors.white,
-                    dashPattern: [10,4],
-                    borderType: BorderType.RRect,
-                      radius: Radius.circular(8),
+                    child: Center(child:Text(values[3].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  ),
+                )
+                )
+            ),
+            GestureDetector(
+              onTap: () {
+                changeIndex(4);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(left:margin, right: margin),
+                child: DottedBorder(
+                  color: Colors.white,
+                  dashPattern: [10,4],
+                  borderType: BorderType.RRect,
+                    radius: Radius.circular(8),
 
-                    strokeWidth: 3,
-                    child: Container(
-                      width: wdt,
-                      height:35,
-                      decoration: BoxDecoration(
-                        color: ( _selectedIndex == 4 ) ? _colorGreen : _colorGray,
-                        borderRadius: BorderRadius.circular(8)
-                      ),
-                      child: Center(child:Text(values[4].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  strokeWidth: 3,
+                  child: Container(
+                    width: wdt,
+                    height:35,
+                    decoration: BoxDecoration(
+                      color: ( _selectedIndex == 4 ) ? _colorGreen : _colorGray,
+                      borderRadius: BorderRadius.circular(8)
                     ),
-                  )
-                  )
-              )
-            ]
-          )
+                    child: Center(child:Text(values[4].toString(),style: TextStyle(fontFamily: "SegoeUI", fontSize: 25, color:  Colors.white)))
+                  ),
+                )
+                )
+            )
+          ]
         )
       )
     );
