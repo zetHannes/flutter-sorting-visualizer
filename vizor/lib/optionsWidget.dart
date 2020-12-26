@@ -15,7 +15,6 @@ class OptionsWidget extends StatefulWidget {
 
   final ValueChanged<double> onSliderChanged;
   final ValueChanged<int> onSelectionChanged;
-
   OptionsWidget({Key key, @required this.onSelectionChanged, @required this.onSliderChanged}) : super(key: key);
 
   @override
@@ -24,7 +23,8 @@ class OptionsWidget extends StatefulWidget {
 
 class OptionsWidgetState extends State<OptionsWidget> {
   
-
+  bool disabled = false;
+  
   int getArraySize() {
     return Keys.arraySizeKey.currentState.getSelection();
   }
@@ -34,31 +34,48 @@ class OptionsWidgetState extends State<OptionsWidget> {
 
   // actions after finishing the sort or resetting the data.
   void finish() {
-    Keys.arraySizeKey.currentState.enable();
+    enable();
   }
 
   // prepares the OptionsWidget and the child widgets for sorting
   void prepareSortingVisualization() {
-    Keys.arraySizeKey.currentState.disable();
+    disable();
+  }
+
+  // Disable the widget: IgnorePointer ignoring attribute is true
+  bool disable() {
+    setState(() {
+      disabled = true;      
+    });
+  }
+
+  // Enable the widget: IgnorePointer ignoring attribute is false
+  bool enable() {
+    setState(() {
+      disabled = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Padding(
-        padding: EdgeInsets.only(top:10, bottom:5),
-        child: Text("Speed", style: TextStyle(color: Colors.white, fontFamily: "Segoe UI", fontWeight: FontWeight.bold, fontSize:30)),
-      ),
-      VizorSlider(key: Keys.sliderKey, onValueChanged: widget.onSliderChanged,),
-      Padding(
-        padding: EdgeInsets.only(top:10,bottom:5),
-        child:
-        Text("Data Set Size", style: TextStyle(color: Colors.white, fontFamily: "SegoeUI", fontWeight: FontWeight.bold, fontSize:30))
-      ),
-      ArraySizeWidget(
-        key: Keys.arraySizeKey,
-        onSelectionChanged: widget.onSelectionChanged,
-      )
-    ]);
+    return IgnorePointer(
+      ignoring: disabled,
+      child: Column(children: [
+        Padding(
+          padding: EdgeInsets.only(top:10, bottom:5),
+          child: Text("Speed", style: TextStyle(color: Colors.white, fontFamily: "Segoe UI", fontWeight: FontWeight.bold, fontSize:30)),
+        ),
+        VizorSlider(key: Keys.sliderKey, onValueChanged: widget.onSliderChanged,),
+        Padding(
+          padding: EdgeInsets.only(top:10,bottom:5),
+          child:
+          Text("Data Set Size", style: TextStyle(color: Colors.white, fontFamily: "SegoeUI", fontWeight: FontWeight.bold, fontSize:30))
+        ),
+        ArraySizeWidget(
+          key: Keys.arraySizeKey,
+          onSelectionChanged: widget.onSelectionChanged,
+        )
+      ])
+    );
   }
 }
