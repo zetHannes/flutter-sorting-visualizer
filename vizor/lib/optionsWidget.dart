@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:vizor/scrollSelector.dart';
 import 'package:vizor/sliderWidget.dart';
 
 import 'arraySizeWidget.dart';
@@ -15,7 +16,9 @@ class OptionsWidget extends StatefulWidget {
 
   final ValueChanged<double> onSliderChanged;
   final ValueChanged<int> onSelectionChanged;
-  OptionsWidget({Key key, @required this.onSelectionChanged, @required this.onSliderChanged}) : super(key: key);
+  final ValueChanged<String> onSortingAlgoChanged;
+
+  OptionsWidget({Key key, @required this.onSelectionChanged, @required this.onSliderChanged, @required this.onSortingAlgoChanged}) : super(key: key);
 
   @override
   OptionsWidgetState createState() => OptionsWidgetState();
@@ -56,11 +59,16 @@ class OptionsWidgetState extends State<OptionsWidget> {
     });
   }
 
+  void scrollSelectorChanged(String value) {
+    widget.onSortingAlgoChanged(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return IgnorePointer(
       ignoring: disabled,
       child: Column(children: [
+        ScrollSelector(onValueChanged: scrollSelectorChanged,),
         Padding(
           padding: EdgeInsets.only(top:10, bottom:5),
           child: Text("Speed", style: TextStyle(color: Colors.white, fontFamily: "Segoe UI", fontWeight: FontWeight.bold, fontSize:30)),

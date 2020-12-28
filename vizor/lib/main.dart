@@ -50,6 +50,9 @@ class _SortingPageState extends State<SortingPage> {
     _dataWidgetKey.currentState.changeSpeed(percentage);
   }
 
+  void setSortingAlgorithm(String which) {
+
+  }
 
   GlobalKey<OptionsWidgetState> _optionsWidgetKey = GlobalKey();
   GlobalKey<DataWidgetState> _dataWidgetKey = GlobalKey();
@@ -68,7 +71,7 @@ class _SortingPageState extends State<SortingPage> {
           color:Color.fromARGB(255,7,47,92),
           child:Column(children: [
           DataWidget(key: _dataWidgetKey, onFinish: finish,),
-          OptionsWidget(key: _optionsWidgetKey, onSelectionChanged: changeSelection, onSliderChanged: changeSpeed,),
+          OptionsWidget(key: _optionsWidgetKey, onSelectionChanged: changeSelection, onSliderChanged: changeSpeed, onSortingAlgoChanged: setSortingAlgorithm,),
           ( !finished ) ? 
             Padding(
               padding: EdgeInsets.all(10.0),
