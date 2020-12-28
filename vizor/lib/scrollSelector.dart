@@ -1,7 +1,7 @@
 
 import 'dart:io';
 import 'dart:math' as math;
-
+import 'package:vizor/modes.dart';
 import 'package:flutter/material.dart';
 class ScrollSelector extends StatefulWidget {
   final ValueChanged<String> onValueChanged;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vizor/arraySizeWidget.dart';
 import 'package:vizor/dataWidget.dart';
 import 'package:vizor/optionsWidget.dart';
+import 'package:vizor/modes.dart';
 void main() {
   runApp(VizorApp());
 }
@@ -43,7 +44,7 @@ class _SortingPageState extends State<SortingPage> {
 
   void sort() {
       _optionsWidgetKey.currentState.prepareSortingVisualization();
-      _dataWidgetKey.currentState.sort(_dataWidgetKey.currentState.modeBubbleSort);
+      _dataWidgetKey.currentState.sort(modeBubbleSort);
   }
 
   void changeSpeed(double percentage) {

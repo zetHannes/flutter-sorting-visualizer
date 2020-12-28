@@ -1,7 +1,7 @@
 
 import 'dart:io';
 import 'dart:math';
-
+import 'package:vizor/modes.dart';
 import 'package:flutter/material.dart';
 class DataWidget extends StatefulWidget {
   final VoidCallback onFinish;
@@ -19,9 +19,6 @@ class DataWidgetState extends State<DataWidget> {
   bool stopped = false;
   bool startupMode = true;
   final VoidCallback onFinish;
-  final int modeBubbleSort = 0,
-            modeQuickSort = 1,
-            modeHeapSort = 2;
 
   DataWidgetState({Key key, @required this.onFinish}) {
     generateNewData(_itemCount);
