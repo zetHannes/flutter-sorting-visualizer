@@ -1,7 +1,7 @@
 
 import 'dart:io';
 import 'dart:math';
-import 'package:vizor/modes.dart';
+import 'package:vizor/modes.dart' as modes;
 import 'package:flutter/material.dart';
 class DataWidget extends StatefulWidget {
   final VoidCallback onFinish;
@@ -81,16 +81,39 @@ class DataWidgetState extends State<DataWidget> {
     onFinish();
   }
 
+  void quickSort() {
 
+  }
+
+  void heapSort() {
+
+  }
+
+  void mergeSort() {
+
+  }
+
+  void insertionSort() {
+
+  }
+  
   void sort(int whichSortingAlgorithm) {
-    if ( whichSortingAlgorithm == modeBubbleSort ) {
-      bubbleSort();
-    }
-    else if ( whichSortingAlgorithm == modeQuickSort ) {
-      bubbleSort();
-    }
-    else if ( whichSortingAlgorithm == modeHeapSort ) {
-      bubbleSort();
+    switch(whichSortingAlgorithm) {
+      case modes.modeBubbleSort:
+        bubbleSort();
+        break;
+      case modes.modeQuickSort:
+        quickSort();
+        break;
+      case modes.modeHeapSort:
+        heapSort();
+        break;
+      case modes.modeMergeSort:
+        mergeSort();
+        break;
+      case modes.modeInsertionSort:
+        insertionSort();
+        break;
     }
   }
 
@@ -103,7 +126,7 @@ class DataWidgetState extends State<DataWidget> {
   @override
   Widget build(BuildContext context) {
     Random rand = new Random();
-    return GestureDetector(onTap: () {sort(modeBubbleSort);},child:Column(children: [
+    return Column(children: [
       Padding(
         padding: EdgeInsets.all(5),
         child: SizedBox(
@@ -138,6 +161,6 @@ class DataWidgetState extends State<DataWidget> {
         indent: 5,
         endIndent: 5,
       )
-    ],));
+    ],);
   }
 }
