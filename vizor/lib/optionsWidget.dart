@@ -16,7 +16,7 @@ class OptionsWidget extends StatefulWidget {
 
   final ValueChanged<double> onSliderChanged;
   final ValueChanged<int> onSelectionChanged;
-  final ValueChanged<String> onSortingAlgoChanged;
+  final ValueChanged<int> onSortingAlgoChanged;
 
   OptionsWidget({Key key, @required this.onSelectionChanged, @required this.onSliderChanged, @required this.onSortingAlgoChanged}) : super(key: key);
 
@@ -59,7 +59,7 @@ class OptionsWidgetState extends State<OptionsWidget> {
     });
   }
 
-  void scrollSelectorChanged(String value) {
+  void scrollSelectorChanged(int value) {
     widget.onSortingAlgoChanged(value);
   }
 

@@ -4,7 +4,7 @@ import 'dart:math' as math;
 import 'package:vizor/modes.dart';
 import 'package:flutter/material.dart';
 class ScrollSelector extends StatefulWidget {
-  final ValueChanged<String> onValueChanged;
+  final ValueChanged<int> onValueChanged;
   ScrollSelector({Key key, @required this.onValueChanged}) : super(key: key);
 
   @override
@@ -74,7 +74,7 @@ class ScrollSelectorState extends State<ScrollSelector> with TickerProviderState
                             curve: Curves.ease);
                         });
                         _currentIndex = index;
-                        widget.onValueChanged(items[_currentIndex]);
+                        widget.onValueChanged(_currentIndex);
                       }	
                     },
                     child: SingleChildScrollView(

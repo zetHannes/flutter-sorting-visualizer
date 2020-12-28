@@ -44,15 +44,15 @@ class _SortingPageState extends State<SortingPage> {
 
   void sort() {
       _optionsWidgetKey.currentState.prepareSortingVisualization();
-      _dataWidgetKey.currentState.sort(modeBubbleSort);
+      _dataWidgetKey.currentState.sort(_currentAlgorithm);
   }
 
   void changeSpeed(double percentage) {
     _dataWidgetKey.currentState.changeSpeed(percentage);
   }
 
-  void setSortingAlgorithm(String which) {
-
+  void setSortingAlgorithm(int which) {
+    _currentAlgorithm = which;
   }
 
   GlobalKey<OptionsWidgetState> _optionsWidgetKey = GlobalKey();
@@ -60,6 +60,8 @@ class _SortingPageState extends State<SortingPage> {
   bool started = false;
   bool finished = false;
   String buttonText = "Start";
+  int _currentAlgorithm;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
