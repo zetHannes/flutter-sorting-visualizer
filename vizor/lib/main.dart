@@ -60,7 +60,7 @@ class _SortingPageState extends State<SortingPage> {
   bool started = false;
   bool finished = false;
   String buttonText = "Start";
-  int _currentAlgorithm;
+  int _currentAlgorithm = 0;
 
   @override
   Widget build(BuildContext context) {
