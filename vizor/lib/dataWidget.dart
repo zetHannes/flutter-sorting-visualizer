@@ -143,7 +143,7 @@ class DataWidgetState extends State<DataWidget> {
                 return Container(
                   width:fullSize,
                   child: Padding(
-                    padding: EdgeInsets.only(right:fullSize*0.25, top:(200.0-contHeight)),
+                    padding: EdgeInsets.only(right:fullSize*0.25, left: (_itemCount<=50) ? fullSize*0.25 : 0, top:(200.0-contHeight)),
                     child:Container(
                       color: Color.fromARGB(255, 153,155,154),
                       height: contHeight,
