@@ -13,11 +13,17 @@ class DataWidget extends StatefulWidget {
 
 class DataWidgetState extends State<DataWidget> {
   int _itemCount = 10;
+
   double _sleepTime = 2;
   double _initialSleepTime = 2;
+
   List<double> values;
+
   bool stopped = false;
   bool startupMode = true;
+
+  bool finished = false;
+  double previousElement = -100;
   final VoidCallback onFinish;
 
   DataWidgetState({Key key, @required this.onFinish}) {
@@ -81,8 +87,78 @@ class DataWidgetState extends State<DataWidget> {
     onFinish();
   }
 
-  void quickSort() {
+Future<int> _partition(low,high) async{
+  print("partition: " + stopped.toString());
+    if ( stopped ) {
+        return -10;
+    }
+    int idx = low;
+    int pivot = high;
+    while(idx < pivot) {
+        if (pivot > idx && values.elementAt(idx) > values.elementAt(pivot)) {
+          setState(() {
+            double val = values.elementAt(idx);
+            values.removeAt(idx);
+            values.insert(pivot,val);
+            pivot-=1;
+          });
+        }
+        else if (pivot > idx) {
+            idx+=1;
+        }
+        else if (pivot < idx && values.elementAt(idx) < values.elementAt(pivot)) {
+          setState(() {
+            double val = values.elementAt(idx);
+            values.removeAt(idx);
+            values.insert(pivot,val);
+            idx+=1;
+          });
+        }
+        await Future.delayed(Duration(milliseconds: (_sleepTime*1000).round()));
+    }
+    return pivot;
+}
+Future<void> _quickSort(int low, int high) async {
+  print("_quickSort " + stopped.toString());
+  if ( stopped ) {
+    return;
+  }
+  if ( low < high) {
+      int pi = await _partition(low,high);
+      _quickSort(low,pi-1);
+      _quickSort(pi+1,high);
+    }
+    else {
+      bool unsorted = false;
+      double previous = -100;
+      for(int i = 0; i < values.length;i++) {
+        double current = values.elementAt(i);
+        if ( current < previous ) {
+          unsorted = true;
+          break;
+        }
+        previous = current;
+      }
+      if ( !unsorted ) {
+        print("finished!");
+        finished = true;
+        return;
+      }
+    }
+  }
 
+  void quickSort() async {
+    await _quickSort(0, values.length-1);
+
+    // algorithm has finished
+    if ( finished ) { 
+      print("tell other widgets to finish");
+      sleep(Duration(seconds:1)); // wait for the recursion to end
+      onFinish();                 // tell the rest of the app to finish off
+    }
+    else {
+      print("user stoppped algorithm. jeez");
+    }
   }
 
   void heapSort() {
@@ -98,6 +174,7 @@ class DataWidgetState extends State<DataWidget> {
   }
   
   void sort(int whichSortingAlgorithm) {
+    stopped = false;
     switch(whichSortingAlgorithm) {
       case modes.modeBubbleSort:
         bubbleSort();
@@ -118,6 +195,7 @@ class DataWidgetState extends State<DataWidget> {
   }
 
   void stop() {
+    print("stopped");
     setState(() {
       stopped = true;      
     });
@@ -131,28 +209,7 @@ class DataWidgetState extends State<DataWidget> {
         padding: EdgeInsets.all(5),
         child: SizedBox(
           height: MediaQuery.of(context).size.height*0.37,
-          child: Row(
-            children: [
-            ListView.builder(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: _itemCount,
-              itemBuilder: (BuildContext ctxt, int index) {
-                double fullSize = (MediaQuery.of(context).size.width-10)/_itemCount;
-                double contHeight = values.elementAt(index);
-                return Container(
-                  width:fullSize,
-                  child: Padding(
-                    padding: EdgeInsets.only(right:fullSize*0.25, left: (_itemCount<=50) ? fullSize*0.25 : 0, top:(200.0-contHeight)),
-                    child:Container(
-                      color: Color.fromARGB(255, 153,155,154),
-                      height: contHeight,
-                    )
-                  )
-                );
-              }
-            ),
-          ])
+          child: DataPainter()
         )
       ),
       Divider(
@@ -162,5 +219,37 @@ class DataWidgetState extends State<DataWidget> {
         endIndent: 5,
       )
     ],);
+  }
+}
+
+
+class DataPainter extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+        painter: ShapePainter(),
+        child: Container(),
+      );
+  }
+}
+
+
+class ShapePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = Colors.teal
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round;
+
+    Offset startingPoint = Offset(0, size.height / 2);
+    Offset endingPoint = Offset(size.width, size.height / 2);
+
+    canvas.drawLine(startingPoint, endingPoint, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }
