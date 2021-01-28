@@ -34,7 +34,7 @@ class _SortingPageState extends State<SortingPage> {
       buttonText = "Reset Data";
       started = false;
       finished = true;
-      _optionsWidgetKey.currentState.finish();
+      _optionsWidgetKey.currentState.disabled =true;
     });
   }
 
