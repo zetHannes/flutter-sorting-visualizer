@@ -200,9 +200,6 @@ void swap(List list, int i, int j) {
       });
     }
     }
- 
-    // To heapify a subtree rooted with node i which is
-    // an index in arr[]. n is size of heap
     void heapify(List<double> list, int n, int i)
     {
         int largest = i; // Initialize largest as root
@@ -227,9 +224,75 @@ void swap(List list, int i, int j) {
         }
     }
 
-  void mergeSort() {
 
+  void merge(List<double> list, int l, int m, int r) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    List<double> L = new List<double>(n1);
+    List<double> R = new List<double>(n2);
+    int i, j;
+    for (i = 0; i < n1; ++i) {
+      L[i] = list[l + i];
+    }
+    for (j = 0; j < n2; ++j) {
+      R[j] = list[m + 1 + j];
+    }
+
+    i = 0;
+    j = 0;
+
+    int k = l;
+    while (i < n1 && j < n2) {
+      if (L[i] <= R[j]) {
+          list[k] = L[i];
+          i++;
+          updates.add(new Change(List.from(list)));
+      }
+      else {
+          list[k] = R[j];
+          j++;
+          updates.add(new Change(List.from(list)));
+      }
+      k++;
+    }
+
+    while (i < n1) {
+      list[k] = L[i];
+      i++;
+      k++;
+      updates.add(new Change(List.from(list)));
+    }
+    while (j < n2) {
+      list[k] = R[j];
+      j++;
+      k++;
+      updates.add(new Change(List.from(list)));
+    }
   }
+
+    void _mergeSort(List<double> list, int l, int r) {
+      if (l < r) {
+          int m = ((l + r) / 2).floor();
+
+          _mergeSort(list, l, m);
+          _mergeSort(list, m + 1, r);
+
+          merge(list, l, m, r);
+      }
+    }
+
+    mergeSort() async {
+      List<double> list = List.from(values);
+      if ( renewed || updates.length == 0 ) {
+        _mergeSort(list, 0, list.length-1);
+      }
+      bool finished = await showUpdates();
+      if ( finished ) {
+        onFinish();
+      }
+    }
+
 
   void insertionSort() async {
     if ( renewed || updates.length == 0 ) {
