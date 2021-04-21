@@ -65,10 +65,11 @@ class OptionsWidgetState extends State<OptionsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return IgnorePointer(
-      ignoring: disabled,
-      child: Column(children: [
-        ScrollSelector(onValueChanged: scrollSelectorChanged,),
+    return Column(children: [
+        IgnorePointer(
+          ignoring: disabled,
+          child: ScrollSelector(onValueChanged: scrollSelectorChanged,),
+        ),
         Padding(
           padding: EdgeInsets.only(top:10, bottom:5),
           child: Text("Speed", style: TextStyle(color: Colors.white, fontFamily: "Segoe UI", fontWeight: FontWeight.bold, fontSize:30)),
@@ -79,11 +80,13 @@ class OptionsWidgetState extends State<OptionsWidget> {
           child:
           Text("Data Set Size", style: TextStyle(color: Colors.white, fontFamily: "SegoeUI", fontWeight: FontWeight.bold, fontSize:30))
         ),
-        ArraySizeWidget(
-          key: Keys.arraySizeKey,
-          onSelectionChanged: widget.onSelectionChanged,
+        IgnorePointer(
+          ignoring: disabled,
+          child: ArraySizeWidget(
+            key: Keys.arraySizeKey,
+            onSelectionChanged: widget.onSelectionChanged,
+          )
         )
-      ])
-    );
+      ]);
   }
 }
