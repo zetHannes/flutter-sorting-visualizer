@@ -15,19 +15,26 @@ class DataWidget extends StatefulWidget {
 
 class Change {
   List<double> values;
-
-  Change(List<double> vals) {
+  List<int> swapMarkers;
+  Change(List<double> vals, List<int> markers) {
     this.values = vals;
+    this.swapMarkers = markers;
   }
 }
 
-class DataWidgetState extends State<DataWidget> {
+class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
   int _itemCount = 10;
 
+  Animation<int> 
+  ation;
+  AnimationController controller;
+  
   double _sleepTime = 2;
   double _initialSleepTime = 2;
 
   List<double> values;
+  List<double> previousValues;
+  List<int> swapMarkers;
 
   bool renewed = true;
   bool stopped = false;
@@ -48,6 +55,12 @@ class DataWidgetState extends State<DataWidget> {
     generateNewData(_itemCount);
     startupMode = false;
     updates = new List<Change>();
+    swapMarkers = new List<int>(2);
+  }
+
+   @override
+  void initState() {
+    super.initState();
   }
 
   // changes the sleep timer in order to accelerate/slow down the sorting operations
@@ -78,13 +91,14 @@ class DataWidgetState extends State<DataWidget> {
         }
         renewed = true;
         updates = new List<Change>();
+        swapMarkers = new List<int>(2);
       });
     }
   }
 
-
   Future<bool> showUpdates() async {
     int length = updates.length;
+    updates.add(new Change(new List<double>(), new List<int>(2)));
     for(int i = 0; i < length; i++) {
       if(stopped) {
         stopped = false;
@@ -92,15 +106,21 @@ class DataWidgetState extends State<DataWidget> {
       }
       await Future.delayed(Duration(milliseconds: (_sleepTime*1000).round()));  
       setState(() {
-        values = List.from(updates.elementAt(0).values);    
-        updates.removeAt(0);    
+        values = List.from(updates.elementAt(0).values);   
+        swapMarkers = updates.elementAt(0).swapMarkers; 
+        if ( i < length-1 ) // do not remove the last one at the end to be able to clear the swap markers
+          updates.removeAt(0);    
       });   
     }
+    setState(() {
+        values = List.from(updates.elementAt(0).values);   
+        swapMarkers = List<int>();
+        swapMarkers.add(-1);
+        swapMarkers.add(-1);
+      });   
     updates = new List<Change>();
     return true;
   }
-
-
 
   void bubbleSort() async {
     if ( renewed || updates.length == 0 ) {
@@ -108,8 +128,7 @@ class DataWidgetState extends State<DataWidget> {
       for(int i = 0; i < list.length-1; i++) {
         for( int j = 0; j < list.length-i-1; j++) {
           if ( list.elementAt(j) > list.elementAt(j+1) ) {
-            swap(list, j, j+1);
-            updates.add(new Change(List.from(list)));
+            swap(list, j, j+1);            
           }
         }
       }
@@ -121,8 +140,6 @@ class DataWidgetState extends State<DataWidget> {
       });
     }
   }
-
- 
  
  void quickSort() async {
     List<double> list = List.from(values);
@@ -135,7 +152,6 @@ class DataWidgetState extends State<DataWidget> {
       onFinish();
     }
   }
-
 
 List<double> _quickSort(List<double> list, int low, int high) {
   if (low < high) {
@@ -157,26 +173,12 @@ int partition(List<double> list, low, high) {
     if (list[j] < pivot) {
       i++;
       swap(list, i, j);
-      List<double> l = List.from(list);
-      updates.add(new Change(l));
     }
   }
   swap(list, i + 1, high);
-  List<double> l = List.from(list);
-  updates.add(new Change(l));
   return i + 1;
 }
 
-void swap(List list, int i, int j) {
-  double temp = list[i];
-  list[i] = list[j];
-  list[j] = temp;
-}
-
-
-
-
-  
   void heapSort() async {
     if ( renewed || updates.length == 0 ) {
       List<double> list = List.from(values);
@@ -188,7 +190,6 @@ void swap(List list, int i, int j) {
         for (int i = n - 1; i > 0; i--) {
             // Move current root to end
             swap(list,0,i);
-            updates.add(new Change(List.from(list)));
  
             heapify(list, i, 0);
         }
@@ -200,29 +201,28 @@ void swap(List list, int i, int j) {
       });
     }
     }
-    void heapify(List<double> list, int n, int i)
-    {
-        int largest = i; // Initialize largest as root
-        int l = 2 * i + 1; // left = 2*i + 1
-        int r = 2 * i + 2; // right = 2*i + 2
- 
-        // If left child is larger than root
-        if (l < n && list.elementAt(l) > list.elementAt(largest))
-            largest = l;
- 
-        // If right child is larger than largest so far
-        if (r < n && list.elementAt(r) > list.elementAt(largest))
-            largest = r;
- 
-        // If largest is not root
-        if (largest != i) {
-            swap(list,i,largest);
-            updates.add(new Change(List.from(list)));
- 
-            // Recursively heapify the affected sub-tree
-            heapify(list, n, largest);
-        }
-    }
+
+  void heapify(List<double> list, int n, int i) {
+      int largest = i; // Initialize largest as root
+      int l = 2 * i + 1; // left = 2*i + 1
+      int r = 2 * i + 2; // right = 2*i + 2
+
+      // If left child is larger than root
+      if (l < n && list.elementAt(l) > list.elementAt(largest))
+          largest = l;
+
+      // If right child is larger than largest so far
+      if (r < n && list.elementAt(r) > list.elementAt(largest))
+          largest = r;
+
+      // If largest is not root
+      if (largest != i) {
+          swap(list,i,largest);
+
+          // Recursively heapify the affected sub-tree
+          heapify(list, n, largest);
+      }
+  }
 
 
   void merge(List<double> list, int l, int m, int r) {
@@ -245,71 +245,81 @@ void swap(List list, int i, int j) {
     int k = l;
     while (i < n1 && j < n2) {
       if (L[i] <= R[j]) {
+          updates.add(new Change(List.from(list), swapMarkers));
           list[k] = L[i];
           i++;
-          updates.add(new Change(List.from(list)));
+          List<int> mks = new List<int>(2);
+          updates.add(new Change(List.from(list), mks));
       }
       else {
+          updates.add(new Change(List.from(list), swapMarkers));
           list[k] = R[j];
           j++;
-          updates.add(new Change(List.from(list)));
+          List<int> mks = new List<int>(2);
+          updates.add(new Change(List.from(list), mks));
       }
       k++;
     }
 
     while (i < n1) {
+      updates.add(new Change(List.from(list), swapMarkers));
       list[k] = L[i];
       i++;
       k++;
-      updates.add(new Change(List.from(list)));
+      List<int> mks = new List<int>(2);
+      updates.add(new Change(List.from(list), mks));
     }
     while (j < n2) {
+      updates.add(new Change(List.from(list), swapMarkers));
       list[k] = R[j];
       j++;
       k++;
-      updates.add(new Change(List.from(list)));
+      List<int> mks = new List<int>(2);
+      updates.add(new Change(List.from(list), mks));
     }
   }
 
-    void _mergeSort(List<double> list, int l, int r) {
-      if (l < r) {
-          int m = ((l + r) / 2).floor();
+  void _mergeSort(List<double> list, int l, int r) {
+    if (l < r) {
+        int m = ((l + r) / 2).floor();
 
-          _mergeSort(list, l, m);
-          _mergeSort(list, m + 1, r);
+        _mergeSort(list, l, m);
+        _mergeSort(list, m + 1, r);
 
-          merge(list, l, m, r);
-      }
+        merge(list, l, m, r);
     }
+  }
 
-    mergeSort() async {
-      List<double> list = List.from(values);
-      if ( renewed || updates.length == 0 ) {
-        _mergeSort(list, 0, list.length-1);
-      }
-      bool finished = await showUpdates();
-      if ( finished ) {
-        onFinish();
-      }
+  mergeSort() async {
+    List<double> list = List.from(values);
+    if ( renewed || updates.length == 0 ) {
+      _mergeSort(list, 0, list.length-1);
     }
-
+    bool finished = await showUpdates();
+    if ( finished ) {
+      onFinish();
+    }
+  }
 
   void insertionSort() async {
     if ( renewed || updates.length == 0 ) {
-    List<double> valuesToInsert = List.from(values);
-    List<double> list = new List<double>();
-    updates.add(new Change(List.from(list)));
-    int remainingValues = valuesToInsert.length;
-    for(int i = 0; i < remainingValues; i++) {
-      double value = valuesToInsert.elementAt(0);
-      valuesToInsert.removeAt(0);
-      int idx = 0;
-      while(idx < list.length && list.elementAt(idx) < value) {
-        idx++;
+      List<double> valuesToInsert = List.from(values);
+      List<double> list = new List<double>();
+      List<int> mks = new List<int>(2);
+      updates.add(new Change(List.from(list), mks));
+      int remainingValues = valuesToInsert.length;
+      for(int i = 0; i < remainingValues; i++) {
+        double value = valuesToInsert.elementAt(0);
+        valuesToInsert.removeAt(0);
+        int idx = 0;
+        while(idx < list.length && list.elementAt(idx) < value) {
+          idx++;
+        }
+        updates.add(new Change(List.from(list), swapMarkers));
+        list.insert(idx, value);
+        List<int> mks = new List<int>(2);
+        updates.add(new Change(List.from(list), mks));
       }
-      list.insert(idx, value);
-      updates.add(new Change(List.from(list)));
-    }
     }
     bool hasFinished = await showUpdates();
     if ( hasFinished ) {
@@ -353,15 +363,30 @@ void swap(List list, int i, int j) {
     });
   }
 
+  
+  void swap(List list, int i, int j) {
+    List<int> mk = new List<int>(2);
+    mk[0] = i;
+    mk[1] = j;
+    updates.add(new Change(List.from(list), mk));
+    double temp = list[i];
+    list[i] = list[j];
+    list[j] = temp;
+    mk[0] = j;
+    mk[1] = i;
+    updates.add(new Change(List.from(list), mk));
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<int> mk = swapMarkers;
     return Column(children: [
       Padding(
         padding: EdgeInsets.all(5),
         child: SizedBox(
           height: MediaQuery.of(context).size.height*0.37,
           child: CustomPaint(
-            painter: ShapePainter(values,_itemCount, _repaint),
+            painter: ShapePainter(values, swapMarkers, _itemCount, _repaint),
             child: Container(),
           )
         )
@@ -380,10 +405,13 @@ void swap(List list, int i, int j) {
 
 class ShapePainter extends CustomPainter {
   List<double> values;
+  List<int> swapMarkers;
   int itemCount;
   ChangeNotifier repaint;
-  ShapePainter(List<double> values, int itemCount, ChangeNotifier repaint) : super(repaint: repaint) {
+
+  ShapePainter(List<double> values, List<int> swapMarkers, int itemCount, ChangeNotifier repaint) : super(repaint: repaint) {
     this.values = values;
+    this.swapMarkers = swapMarkers;
     this.itemCount = itemCount;
   }
 
@@ -399,12 +427,31 @@ class ShapePainter extends CustomPainter {
       ..strokeWidth = fullSize * 0.8
       ..strokeCap = StrokeCap.butt
       ..style = PaintingStyle.stroke;
+    var swapMarkerPaint = Paint()
+      ..color = Colors.green
+      ..strokeWidth = fullSize * 0.8
+      ..strokeCap = StrokeCap.butt
+      ..style = PaintingStyle.stroke;
+    var swapMarkerSwappedPaint = Paint()
+      ..color = Colors.red
+      ..strokeWidth = fullSize * 0.8
+      ..strokeCap = StrokeCap.butt
+      ..style = PaintingStyle.stroke;
+
     int index = 0;
     while ( index < values.length ) {
       double contHeight = values.elementAt(index)*1.5;
       Offset startingPoint = Offset(_offset, size.height);
       Offset endingPoint = Offset(_offset, size.height-contHeight);
-      canvas.drawLine(startingPoint, endingPoint, paint);
+      if ( swapMarkers[0] == index ) {
+        canvas.drawLine(startingPoint, endingPoint, swapMarkerPaint);
+      }
+      else if ( swapMarkers[1] == index ) {
+        canvas.drawLine(startingPoint, endingPoint, swapMarkerSwappedPaint);
+      }
+      else {
+        canvas.drawLine(startingPoint, endingPoint, paint);
+      }
       _offset += fullSize;
       index++;
     }
