@@ -15,8 +15,8 @@ class DataWidget extends StatefulWidget {
 
 class Change {
   List<double> values;
-  List<int> swapMarkers;
-  Change(List<double> vals, List<int> markers) {
+  List<List<int>> swapMarkers;
+  Change(List<double> vals, List<List<int>> markers) {
     this.values = vals;
     this.swapMarkers = markers;
   }
@@ -34,7 +34,7 @@ class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
 
   List<double> values;
   List<double> previousValues;
-  List<int> swapMarkers;
+  List<List<int>> swapMarkers;
 
   bool renewed = true;
   bool stopped = false;
@@ -55,7 +55,9 @@ class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
     generateNewData(_itemCount);
     startupMode = false;
     updates = new List<Change>();
-    swapMarkers = new List<int>(2);
+    swapMarkers = new List<List<int>>(2);
+    swapMarkers[0] = new List<int>();
+    swapMarkers[1] = new List<int>();
   }
 
    @override
@@ -91,14 +93,16 @@ class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
         }
         renewed = true;
         updates = new List<Change>();
-        swapMarkers = new List<int>(2);
+        swapMarkers = new List<List<int>>(2);
+        swapMarkers[0] = new List<int>();
+        swapMarkers[1] = new List<int>();
       });
     }
   }
 
   Future<bool> showUpdates() async {
     int length = updates.length;
-    updates.add(new Change(new List<double>(), new List<int>(2)));
+    updates.add(new Change(new List<double>(), new List<List<int>>(2)));
     for(int i = 0; i < length; i++) {
       if(stopped) {
         stopped = false;
@@ -107,16 +111,16 @@ class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
       await Future.delayed(Duration(milliseconds: (_sleepTime*1000).round()));  
       setState(() {
         values = List.from(updates.elementAt(0).values);   
-        swapMarkers = updates.elementAt(0).swapMarkers; 
+        swapMarkers = List.from(updates.elementAt(0).swapMarkers); 
         if ( i < length-1 ) // do not remove the last one at the end to be able to clear the swap markers
           updates.removeAt(0);    
       });   
     }
     setState(() {
         values = List.from(updates.elementAt(0).values);   
-        swapMarkers = List<int>();
-        swapMarkers.add(-1);
-        swapMarkers.add(-1);
+        swapMarkers = List<List<int>>(2);
+        swapMarkers[0] = new List<int>();
+        swapMarkers[1] = new List<int>();
       });   
     updates = new List<Change>();
     return true;
@@ -248,14 +252,18 @@ int partition(List<double> list, low, high) {
           updates.add(new Change(List.from(list), swapMarkers));
           list[k] = L[i];
           i++;
-          List<int> mks = new List<int>(2);
+          List<List<int>> mks = new List<List<int>>(2);
+          mks[0] = new List<int>();
+          mks[1] = new List<int>();
           updates.add(new Change(List.from(list), mks));
       }
       else {
           updates.add(new Change(List.from(list), swapMarkers));
           list[k] = R[j];
           j++;
-          List<int> mks = new List<int>(2);
+          List<List<int>> mks = new List<List<int>>(2);
+          mks[0] = new List<int>();
+          mks[1] = new List<int>();
           updates.add(new Change(List.from(list), mks));
       }
       k++;
@@ -266,7 +274,9 @@ int partition(List<double> list, low, high) {
       list[k] = L[i];
       i++;
       k++;
-      List<int> mks = new List<int>(2);
+      List<List<int>> mks = new List<List<int>>(2);
+      mks[0] = new List<int>();
+      mks[1] = new List<int>();
       updates.add(new Change(List.from(list), mks));
     }
     while (j < n2) {
@@ -274,7 +284,7 @@ int partition(List<double> list, low, high) {
       list[k] = R[j];
       j++;
       k++;
-      List<int> mks = new List<int>(2);
+      List<List<int>> mks = new List<List<int>>(2);
       updates.add(new Change(List.from(list), mks));
     }
   }
@@ -305,8 +315,10 @@ int partition(List<double> list, low, high) {
     if ( renewed || updates.length == 0 ) {
       List<double> valuesToInsert = List.from(values);
       List<double> list = new List<double>();
-      List<int> mks = new List<int>(2);
-      updates.add(new Change(List.from(list), mks));
+      List<List<int>> mks = new List<List<int>>(2);
+      mks[0] = new List<int>();
+      mks[1] = new List<int>();
+      updates.add(new Change(List.from(list), List.from(mks)));
       int remainingValues = valuesToInsert.length;
       for(int i = 0; i < remainingValues; i++) {
         double value = valuesToInsert.elementAt(0);
@@ -315,11 +327,23 @@ int partition(List<double> list, low, high) {
         while(idx < list.length && list.elementAt(idx) < value) {
           idx++;
         }
-        updates.add(new Change(List.from(list), swapMarkers));
+        mks[0] = new List<int>();
+        mks[1] = new List<int>();
+        mks[1].add(idx);
+        updates.add(new Change(List.from(list), List.from(mks)));
         list.insert(idx, value);
-        List<int> mks = new List<int>(2);
-        updates.add(new Change(List.from(list), mks));
+        mks[0] = new List<int>();
+        mks[1] = new List<int>();
+        mks[0].add(idx);
+        for(int i = idx+1; i < list.length;i++) {
+          mks[1].add(i);
+        }
+        updates.add(new Change(List.from(list), List.from(mks)));
+        
       }
+      mks[0] = new List<int>();
+      mks[1] = new List<int>();
+      updates.add(new Change(list, mks));
     }
     bool hasFinished = await showUpdates();
     if ( hasFinished ) {
@@ -365,21 +389,24 @@ int partition(List<double> list, low, high) {
 
   
   void swap(List list, int i, int j) {
-    List<int> mk = new List<int>(2);
-    mk[0] = i;
-    mk[1] = j;
+    List<List<int>> mk = new List<List<int>>(2);
+    mk[0] = new List<int>();
+    mk[1] = new List<int>();
+    mk[0].add(i);
+    mk[1].add(j);
     updates.add(new Change(List.from(list), mk));
+    mk[0].clear();
+    mk[1].clear();
     double temp = list[i];
     list[i] = list[j];
     list[j] = temp;
-    mk[0] = j;
-    mk[1] = i;
+    mk[0].add(j);
+    mk[1].add(i);
     updates.add(new Change(List.from(list), mk));
   }
 
   @override
   Widget build(BuildContext context) {
-    List<int> mk = swapMarkers;
     return Column(children: [
       Padding(
         padding: EdgeInsets.all(5),
@@ -405,11 +432,11 @@ int partition(List<double> list, low, high) {
 
 class ShapePainter extends CustomPainter {
   List<double> values;
-  List<int> swapMarkers;
+  List<List<int>> swapMarkers;
   int itemCount;
   ChangeNotifier repaint;
 
-  ShapePainter(List<double> values, List<int> swapMarkers, int itemCount, ChangeNotifier repaint) : super(repaint: repaint) {
+  ShapePainter(List<double> values, List<List<int>> swapMarkers, int itemCount, ChangeNotifier repaint) : super(repaint: repaint) {
     this.values = values;
     this.swapMarkers = swapMarkers;
     this.itemCount = itemCount;
@@ -443,10 +470,10 @@ class ShapePainter extends CustomPainter {
       double contHeight = values.elementAt(index)*1.5;
       Offset startingPoint = Offset(_offset, size.height);
       Offset endingPoint = Offset(_offset, size.height-contHeight);
-      if ( swapMarkers[0] == index ) {
+      if ( swapMarkers[0].contains(index) ) {
         canvas.drawLine(startingPoint, endingPoint, swapMarkerPaint);
       }
-      else if ( swapMarkers[1] == index ) {
+      else if ( swapMarkers[1].contains(index) ) {
         canvas.drawLine(startingPoint, endingPoint, swapMarkerSwappedPaint);
       }
       else {
