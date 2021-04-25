@@ -454,7 +454,7 @@ int partition(List<double> list, low, high) {
   Widget build(BuildContext context) {
     return Column(children: [
       Padding(
-        padding: EdgeInsets.all(5),
+        padding: EdgeInsets.only(top:0, left:5, right: 5, bottom: 5),
         child: SizedBox(
           height: MediaQuery.of(context).size.height*0.37,
           child: CustomPaint(
