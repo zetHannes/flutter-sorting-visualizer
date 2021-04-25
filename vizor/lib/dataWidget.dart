@@ -132,12 +132,24 @@ class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
   void bubbleSort() async {
     if ( renewed || updates.length == 0 ) {
       List<double> list = List.from(values);
+      List<int> endMarker = new List<int>();
       for(int i = 0; i < list.length-1; i++) {
+        endMarker = new List<int>();
+        endMarker.add(list.length-i);;
         for( int j = 0; j < list.length-i-1; j++) {
           if ( list.elementAt(j) > list.elementAt(j+1) ) {
-            swap(list, j, j+1);            
+            swap(list, j, j+1, endMarker);            
+          }
+          else {
+            List<List<int>> mks = new List<List<int>>(3);
+            mks[0] = new List<int>();
+            mks[1] = new List<int>();
+            mks[2] = List.from(endMarker);
+            mks[0].add(j);
+            updates.add(new Change(List.from(list), List.from(mks)));
           }
         }
+
       }
     }
     bool hasFinished = await showUpdates();
@@ -434,8 +446,14 @@ int partition(List<double> list, low, high) {
     List<List<int>> mk = new List<List<int>>(3);
     mk[0] = new List<int>();
     mk[1] = new List<int>();
-    mk[1].add(i);
-    mk[1].add(j);
+    if ( list[i] > list[j] ) {
+      mk[0].add(i);
+      mk[1].add(j);
+    }
+    else {
+      mk[1].add(i);
+      mk[0].add(j);
+    }
     if ( additionalMarkers != null ) {
       mk[2] = List.from(additionalMarkers);
     }
