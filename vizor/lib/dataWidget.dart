@@ -434,20 +434,20 @@ int partition(List<double> list, low, high) {
     List<List<int>> mk = new List<List<int>>(3);
     mk[0] = new List<int>();
     mk[1] = new List<int>();
-    mk[0].add(i);
+    mk[1].add(i);
     mk[1].add(j);
-    updates.add(new Change(List.from(list), mk));
-    mk[0].clear();
-    mk[1].clear();
+    if ( additionalMarkers != null ) {
+      mk[2] = List.from(additionalMarkers);
+    }
+    updates.add(new Change(List.from(list), List.from(mk)));
+    mk[0] = new List<int>();
+    mk[1] = new List<int>();
     double temp = list[i];
     list[i] = list[j];
     list[j] = temp;
     mk[0].add(j);
-    mk[1].add(i);
-    if ( additionalMarkers != null ) {
-      mk[2] = List.from(additionalMarkers);
-    }
-    updates.add(new Change(List.from(list), mk));
+    mk[0].add(i);
+    updates.add(new Change(List.from(list), List.from(mk)));
   }
 
   @override
