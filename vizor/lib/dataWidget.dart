@@ -174,15 +174,20 @@ int partition(List<double> list, low, high) {
     return 0;
   }
   double pivot = list[high];
-
+  List<int> pivMarkers = new List<int>();
+  pivMarkers.add(low);
+  pivMarkers.add(high);
   int i = low - 1;
   for (int j = low; j < high; j++) {
     if (list[j] < pivot) {
       i++;
-      swap(list, i, j);
+      swap(list, i, j, pivMarkers);
     }
   }
-  swap(list, i + 1, high);
+  pivMarkers.clear();
+  pivMarkers.add(low);
+  pivMarkers.add(i+1);
+  swap(list, i + 1, high, pivMarkers);
   return i + 1;
 }
 
@@ -425,7 +430,7 @@ int partition(List<double> list, low, high) {
   }
 
   
-  void swap(List list, int i, int j) {
+  void swap(List list, int i, int j, [List<int> additionalMarkers]) {
     List<List<int>> mk = new List<List<int>>(3);
     mk[0] = new List<int>();
     mk[1] = new List<int>();
@@ -439,6 +444,9 @@ int partition(List<double> list, low, high) {
     list[j] = temp;
     mk[0].add(j);
     mk[1].add(i);
+    if ( additionalMarkers != null ) {
+      mk[2] = List.from(additionalMarkers);
+    }
     updates.add(new Change(List.from(list), mk));
   }
 
