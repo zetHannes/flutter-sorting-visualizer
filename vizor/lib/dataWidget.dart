@@ -68,8 +68,11 @@ class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
   // changes the sleep timer in order to accelerate/slow down the sorting operations
   void changeSpeed(double percentage) {
     double factor = 1 - percentage;
+    List<List<int>> markers = swapMarkers;
     setState(() {
+      swapMarkers = markers;
       _sleepTime = _initialSleepTime * factor;
+      
       print("factor:" + factor.toString() + " , sleeptime:" + _sleepTime.toString());
     });
   }
@@ -260,33 +263,33 @@ int partition(List<double> list, low, high) {
     int k = l;
     while (i < n1 && j < n2) {
       if (L[i] <= R[j]) {
-          mks[0] = new List<int>();
-          mks[1] = new List<int>();
-          mks[0].add(k);
-          updates.add(new Change(List.from(list), List.from(mks)));
-          list[k] = L[i];
-          i++;
-          mks[0] = new List<int>();
-          mks[1] = new List<int>();
-          mks[1].add(k);
-          updates.add(new Change(List.from(list), List.from(mks)));
-          mks[1].clear();
-          updates.add(new Change(List.from(list), List.from(mks)));
+        mks[0] = new List<int>();
+        mks[1] = new List<int>();
+        mks[2] = new List<int>();
+        mks[2].add(n1);
+        mks[1].add(k);
+        updates.add(new Change(List.from(list), List.from(mks)));
+        list[k] = L[i];
+        i++;
+        mks[0] = new List<int>();
+        mks[1] = new List<int>();
+        mks[0].add(k);
+        updates.add(new Change(List.from(list), List.from(mks)));
       }
       else {
-          List<List<int>> mks = new List<List<int>>(3);
-          mks[0] = new List<int>();
-          mks[1] = new List<int>();
-          mks[0].add(k);
-          updates.add(new Change(List.from(list), List.from(mks)));
-          list[k] = R[j];
-          j++;
-          mks[0] = new List<int>();
-          mks[1] = new List<int>();
-          mks[1].add(k);
-          updates.add(new Change(List.from(list), List.from(mks)));
-          mks[1].clear();
-          updates.add(new Change(List.from(list), List.from(mks)));
+        List<List<int>> mks = new List<List<int>>(3);
+        mks[0] = new List<int>();
+        mks[1] = new List<int>();
+        mks[1].add(k);
+        mks[2] = new List<int>();
+        mks[2].add(n2);
+        updates.add(new Change(List.from(list), List.from(mks)));
+        list[k] = R[j];
+        j++;
+        mks[0] = new List<int>();
+        mks[1] = new List<int>();
+        mks[0].add(k);
+        updates.add(new Change(List.from(list), List.from(mks))); 
       }
       k++;
     }
@@ -295,22 +298,31 @@ int partition(List<double> list, low, high) {
       List<List<int>> mks = new List<List<int>>(3);
       mks[0] = new List<int>();
       mks[1] = new List<int>();
+      mks[2] = new List<int>();
+      mks[1].add(k);
+      mks[2].add(n1);
       updates.add(new Change(List.from(list), List.from(mks)));
       list[k] = L[i];
       i++;
       k++;
-   
+      mks[1].clear();
+      mks[0].add(k);
       updates.add(new Change(List.from(list), List.from(mks)));
     }
     while (j < n2) {
       List<List<int>> mks = new List<List<int>>(3);
       mks[0] = new List<int>();
       mks[1] = new List<int>();
-      updates.add(new Change(List.from(list), mks));
+      mks[2] = new List<int>();
+      mks[1].add(k);
+      mks[2].add(n2);
+      updates.add(new Change(List.from(list), List.from(mks)));
       list[k] = R[j];
       j++;
       k++;
-      updates.add(new Change(List.from(list), mks));
+      mks[1].clear();
+      mks[0].add(k);
+      updates.add(new Change(List.from(list), List.from(mks)));
     }
   }
 
@@ -499,10 +511,10 @@ class ShapePainter extends CustomPainter {
       double contHeight = values.elementAt(index)*1.5;
       Offset startingPoint = Offset(_offset, size.height);
       Offset endingPoint = Offset(_offset, size.height-contHeight);
-      if ( swapMarkers[0].contains(index) ) {       // red
+      if ( swapMarkers[0].contains(index) ) {       // green
         canvas.drawLine(startingPoint, endingPoint, swapMarkerPaint);
       }
-      else if ( swapMarkers[1].contains(index) ) {  // green
+      else if ( swapMarkers[1].contains(index) ) {  // red
         canvas.drawLine(startingPoint, endingPoint, swapMarkerSwappedPaint);
       }
       else if ( swapMarkers[2] != null && swapMarkers[2].contains(index) ) {  // orange
