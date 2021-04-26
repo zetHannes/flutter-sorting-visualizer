@@ -52,7 +52,7 @@ class VizorSliderState extends State<VizorSlider> with TickerProviderStateMixin 
         });   
       },
       onPointerUp: (PointerUpEvent event) {
-        
+        widget.onValueChanged(getValue());
       },
       child:Stack(children:[
         Container(
