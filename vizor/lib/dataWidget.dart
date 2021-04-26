@@ -113,10 +113,12 @@ class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
       }
       await Future.delayed(Duration(milliseconds: (_sleepTime*1000).round()));  
       setState(() {
-        values = List.from(updates.elementAt(0).values);   
-        swapMarkers = List.from(updates.elementAt(0).swapMarkers); 
-        if ( i < length-1 ) // do not remove the last one at the end to be able to clear the swap markers
-          updates.removeAt(0);    
+        if ( updates.length > 0 ) {
+          values = List.from(updates.elementAt(0).values);   
+          swapMarkers = List.from(updates.elementAt(0).swapMarkers); 
+          if ( i < length-1 ) // do not remove the last one at the end to be able to clear the swap markers
+            updates.removeAt(0);    
+        }
       });   
     }
     setState(() {
