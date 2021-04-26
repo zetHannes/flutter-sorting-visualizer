@@ -207,17 +207,27 @@ int partition(List<double> list, low, high) {
 
   void heapSort() async {
     if ( renewed || updates.length == 0 ) {
+      List<int> orangeMarkers = new List<int>();
       List<double> list = List.from(values);
         int n = list.length;
  
-        for (int i = (n / 2).floor() - 1; i >= 0; i--)
-            heapify(list, n, i);
- 
+        for (int i = (n / 2).floor() - 1; i >= 0; i--) {
+          heapify(list, n, i, orangeMarkers);
+        }
+
         for (int i = n - 1; i > 0; i--) {
             // Move current root to end
-            swap(list,0,i);
- 
-            heapify(list, i, 0);
+            orangeMarkers.clear();
+            swap(list,0,i, orangeMarkers);
+            orangeMarkers.add(i);
+            List<List<int>> l = new List<List<int>>(3);
+            l[0] = new List<int>();
+            l[1] = new List<int>();
+            l[2] = orangeMarkers;
+            print("index " + orangeMarkers[0].toString());
+            updates.add(new Change(List.from(list), List.from(l)));
+            heapify(list, i, 0, orangeMarkers);
+
         }
     }
     bool hasFinished = await showUpdates();
@@ -228,26 +238,27 @@ int partition(List<double> list, low, high) {
     }
   }
 
-  void heapify(List<double> list, int n, int i) {
-      int largest = i; // Initialize largest as root
-      int l = 2 * i + 1; // left = 2*i + 1
-      int r = 2 * i + 2; // right = 2*i + 2
+  void heapify(List<double> list, int n, int i, List<int> orangeMarkers) {
 
-      // If left child is larger than root
-      if (l < n && list.elementAt(l) > list.elementAt(largest))
-          largest = l;
+    int largest = i; // Initialize largest as root
+    int l = 2 * i + 1; // left = 2*i + 1
+    int r = 2 * i + 2; // right = 2*i + 2
 
-      // If right child is larger than largest so far
-      if (r < n && list.elementAt(r) > list.elementAt(largest))
-          largest = r;
+    // If left child is larger than root
+    if (l < n && list.elementAt(l) > list.elementAt(largest))
+        largest = l;
 
-      // If largest is not root
-      if (largest != i) {
-          swap(list,i,largest);
+    // If right child is larger than largest so far
+    if (r < n && list.elementAt(r) > list.elementAt(largest))
+        largest = r;
 
-          // Recursively heapify the affected sub-tree
-          heapify(list, n, largest);
-      }
+    // If largest is not root
+    if (largest != i) {
+        swap(list,i,largest, orangeMarkers);
+
+        // Recursively heapify the affected sub-tree
+        heapify(list, n, largest, orangeMarkers);
+    }
   }
 
 
