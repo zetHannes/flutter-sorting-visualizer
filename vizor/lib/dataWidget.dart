@@ -226,7 +226,7 @@ int partition(List<double> list, low, high) {
         onFinish();
       });
     }
-    }
+  }
 
   void heapify(List<double> list, int n, int i) {
       int largest = i; // Initialize largest as root
