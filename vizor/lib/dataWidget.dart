@@ -395,7 +395,9 @@ int partition(List<double> list, low, high) {
           mks[1].add(i);
         }
         updates.add(new Change(List.from(list), List.from(mks)));
-        
+        mks[0] = new List<int>();
+        mks[1] = new List<int>();
+        updates.add(new Change(List.from(list), List.from(mks)));
       }
       mks[0] = new List<int>();
       mks[1] = new List<int>();
