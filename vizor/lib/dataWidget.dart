@@ -105,13 +105,17 @@ class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
 
   Future<bool> showUpdates() async {
     int length = updates.length;
-    updates.add(new Change(new List<double>(), new List<List<int>>(3)));
+   // updates.add(new Change(new List<double>(), new List<List<int>>(3)));
     for(int i = 0; i < length; i++) {
       if(stopped) {
         stopped = false;
         return false;
       }
       await Future.delayed(Duration(milliseconds: (_sleepTime*1000).round()));  
+      if(stopped) {
+        stopped = false;
+        return false;
+      }
       setState(() {
         if ( updates.length > 0 ) {
           values = List.from(updates.elementAt(0).values);   
@@ -120,6 +124,10 @@ class DataWidgetState extends State<DataWidget> with TickerProviderStateMixin {
             updates.removeAt(0);    
         }
       });   
+    }
+    if(stopped) {
+      stopped = false;
+      return false;
     }
     setState(() {
         values = List.from(updates.elementAt(0).values);   
@@ -224,7 +232,6 @@ int partition(List<double> list, low, high) {
             l[0] = new List<int>();
             l[1] = new List<int>();
             l[2] = orangeMarkers;
-            print("index " + orangeMarkers[0].toString());
             updates.add(new Change(List.from(list), List.from(l)));
             heapify(list, i, 0, orangeMarkers);
 
